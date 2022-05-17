@@ -14,9 +14,11 @@ const INITIAL_PROMPT = "Write a recipe for an invisibility potion.";
 
 const getOpenAIResponseObject = async (
   promptString,
-  engineId = "text-curie-001"
+  engineId = "text-curie-001",
 ) => {
   let response;
+  let timeout = 6000
+  const controller = new AbortController()
 
   let url = `https://api.openai.com/v1/engines/${engineId}/completions`;
   let headers = {
@@ -34,11 +36,14 @@ const getOpenAIResponseObject = async (
   };
 
   try {
+    const id = setTimeout(() => controller.abort(), timeout )
     response = await fetch(url, {
       method: "POST",
       headers,
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
+      signal: controller.signal
     });
+    clearTimeout(id)
     return response.json();
   } catch (err) {
     console.error(err.message, err.stack);
