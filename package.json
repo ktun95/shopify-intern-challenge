@@ -9,10 +9,7 @@
     "start": "webpack && node server",
     "start-dev": "node server && webpack -w"
   },
-  "keywords": [
-    "OpenAI",
-    "React"
-  ],
+  "keywords": ["OpenAI", "React"],
   "author": "Kevin Tun",
   "license": "MIT",
   "dependencies": {

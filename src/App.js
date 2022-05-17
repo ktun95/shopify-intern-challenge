@@ -14,11 +14,11 @@ const INITIAL_PROMPT = "Write a recipe for an invisibility potion.";
 
 const getOpenAIResponseObject = async (
   promptString,
-  engineId = "text-curie-001",
+  engineId = "text-curie-001"
 ) => {
   let response;
-  let timeout = 6000
-  const controller = new AbortController()
+  let timeout = 6000;
+  const controller = new AbortController();
 
   let url = `https://api.openai.com/v1/engines/${engineId}/completions`;
   let headers = {
@@ -36,41 +36,38 @@ const getOpenAIResponseObject = async (
   };
 
   try {
-    const id = setTimeout(() => controller.abort(), timeout )
+    const id = setTimeout(() => controller.abort(), timeout);
     response = await fetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify(body),
       signal: controller.signal
     });
-    clearTimeout(id)
+    clearTimeout(id);
     return response.json();
   } catch (err) {
     console.error(err.message, err.stack);
   }
 };
 
-const parseAPIResponse = (responseObject) => {
-  const { id, choices } = responseObject;
+const parseAPIResponse = async (responseObject) => {
+  const { id, choices } = await responseObject;
   return { id, responseString: choices[0].text };
 };
 
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    fetchAndSetInitialResponse();
+    fetchAndSetResponse(INITIAL_PROMPT);
   }, []);
 
-  const fetchAndSetInitialResponse = async () => {
-    const initialFetchData = await getOpenAIResponseObject(INITIAL_PROMPT);
-    const initialResponseItem = parseAPIResponse(initialFetchData);
-    setResponses([
-      ...responses,
-      { prompt: INITIAL_PROMPT, ...initialResponseItem }
-    ]);
+  const fetchAndSetResponse = (promptString) => {
+    const fetchedData = getOpenAIResponseObject(promptString);
+    const responseItem = parseAPIResponse(fetchedData);
+    setResponses([...responses, { prompt: promptString, ...responseItem }]);
   };
 
   const handleChange = (evt) => {
@@ -80,15 +77,15 @@ export default function App() {
   const handleSubmit = async (evt) => {
     setIsSubmitting(true);
     evt.preventDefault(); // return false
-    let newResponseItem;
 
-    const data = await getOpenAIResponseObject(prompt);
-    const responseAttributes = parseAPIResponse(data);
-    newResponseItem = { prompt, ...responseAttributes };
-
-    setPrompt("");
-    setResponses([newResponseItem, ...responses]);
-    setIsSubmitting(false);
+    try {
+      fetchAndSetResponse(prompt);
+      setPrompt("");
+    } catch (err) {
+      console.error(err.message, err.stack);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
