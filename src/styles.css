@@ -5,7 +5,27 @@
 
 #text-input-button-block {
   width: 100%;
+}
+
+#controls {
   text-align: right;
+}
+
+#clear-all-button {
+  text-decoration: underline;
+  border: none;
+  background-color: inherit;
+}
+
+#submit-prompt-button {
+  width: 5rem;
+  height: 2.5rem;
+  color: rgb(255, 255, 255);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.125rem;
+  background-color: rgb(59, 130, 218);
+  border: none;
 }
 
 #root {
@@ -56,6 +76,16 @@
   height: 100%;
 }
 
+.icon-button {
+  border: none;
+  background-color: inherit;
+}
+
+#responses-list > h1 {
+  width: min-content;
+  display: inline-block;
+}
+
 div {
   box-sizing: border-box;
 }
@@ -71,17 +101,6 @@ textarea {
   border-style: solid;
 }
 
-button {
-  width: 5rem;
-  height: 2.5rem;
-  color: rgb(255, 255, 255);
-  padding: 0.5rem;
-  border-radius: 4px;
-  margin-top: 0.125rem;
-  background-color: rgb(59, 130, 218);
-  border: none;
-}
-
 button:hover {
   cursor: pointer;
 }
@@ -93,16 +112,6 @@ button:disabled {
 html,
 body {
   margin: 0;
-  height: 100vh;
   font-family: sans-serif;
   box-sizing: border-box;
-}
-
-#backdrop {
-  position: absolute;
-  filter: blur(4px);
-  z-index: -1;
-  height: 100vh;
-  width: 100vw;
-  background-image: url(https://images4.alphacoders.com/107/1070469.jpg);
 }
