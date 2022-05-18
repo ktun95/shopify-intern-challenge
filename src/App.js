@@ -1,7 +1,8 @@
 /*
-  CHANGE - Use an environmental variable for SECRET
   ADD - more sophisticated error handling on getOpenAIReponseObject
   ADD - Local Storage 
+  TEST - what fixed handleSubmit? flushSync or await?
+  FIX - Initial response is fetched twice, when it should be fetched once.
 */
 
 import "./styles.css";
@@ -10,7 +11,7 @@ import { flushSync } from "react-dom";
 import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
-const API_TOKEN = "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";
+const API_TOKEN = window.API_TOKEN;
 const INITIAL_PROMPT = "Write a recipe for an invisibility potion.";
 
 const getOpenAIResponseObject = async (
@@ -61,6 +62,8 @@ export default function App() {
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  console.log(window.API_TOKEN);
 
   useEffect(() => {
     fetchAndSetResponse(INITIAL_PROMPT);
