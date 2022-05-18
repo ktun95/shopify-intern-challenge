@@ -15,13 +15,15 @@ export const PromptInput = ({
         onSubmit={handleSubmit}
       >
         <div id="text-input-button-block">
+          <label for="prompt-input">Enter a prompt</label>
           <textarea
-            id="prompt-input"
+            name="prompt-input"
             onChange={handleChange}
             value={prompt}
           ></textarea>
           <div id="controls">
-            <button type="submit" disabled={isSubmitting}>Submit</button>
+            
+            <button id="submit-prompt-button" type="submit" aria-label="Submit" disabled={isSubmitting}>Submit</button>
           </div>
         </div>
       </form>
