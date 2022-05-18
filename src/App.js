@@ -5,11 +5,12 @@
 */
 
 import "./styles.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
-const API_TOKEN = "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";
+const API_TOKEN = "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";
 const INITIAL_PROMPT = "Write a recipe for an invisibility potion.";
 
 const getOpenAIResponseObject = async (
@@ -50,8 +51,9 @@ const getOpenAIResponseObject = async (
   }
 };
 
-const parseAPIResponse = async (responseObject) => {
-  const { id, choices } = await responseObject;
+const parseAPIResponse = (responseObject) => {
+  console.log("from parseAPIresponse", responseObject);
+  const { id, choices } = responseObject;
   return { id, responseString: choices[0].text };
 };
 
@@ -64,10 +66,14 @@ export default function App() {
     fetchAndSetResponse(INITIAL_PROMPT);
   }, []);
 
-  const fetchAndSetResponse = (promptString) => {
-    const fetchedData = getOpenAIResponseObject(promptString);
+  const fetchAndSetResponse = async (promptString) => {
+    const fetchedData = await getOpenAIResponseObject(promptString);
+    console.log("fromfetchAndSet", fetchedData);
     const responseItem = parseAPIResponse(fetchedData);
-    setResponses([...responses, { prompt: promptString, ...responseItem }]);
+    setResponses((prevResponses) => [
+      { prompt: promptString, ...responseItem },
+      ...prevResponses
+    ]);
   };
 
   const handleChange = (evt) => {
@@ -75,15 +81,20 @@ export default function App() {
   };
 
   const handleSubmit = async (evt) => {
-    setIsSubmitting(true);
     evt.preventDefault(); // return false
 
+    flushSync(() => {
+      console.log("flushing updates");
+      setIsSubmitting(true);
+    });
+
     try {
-      fetchAndSetResponse(prompt);
-      setPrompt("");
+      await fetchAndSetResponse(prompt);
+      console.log(isSubmitting);
     } catch (err) {
       console.error(err.message, err.stack);
     } finally {
+      setPrompt("");
       setIsSubmitting(false);
     }
   };
