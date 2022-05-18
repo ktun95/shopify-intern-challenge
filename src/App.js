@@ -1,7 +1,5 @@
 /*
   ADD - more sophisticated error handling on getOpenAIReponseObject
-  ADD - Local Storage 
-  TEST - what fixed handleSubmit? flushSync or await?
 */
 
 import "./styles.css";
@@ -12,7 +10,8 @@ import { ResponseList } from "./components/ResponseList.js";
 
 const API_TOKEN = window.API_TOKEN;
 const LOCAL_STORAGE_KEY = "openAIResponses";
-const INITIAL_PROMPT = "Write a recipe for an invisibility potion.";
+const INITIAL_PROMPT = "Write a .";
+
 const getOpenAIResponseObject = async (
   promptString,
   engineId = "text-curie-001"
@@ -62,17 +61,19 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const savedResponses = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!savedResponses) {
+    const savedResponses = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY));
+    console.log(savedResponses, savedResponses.length)
+    if (!savedResponses || savedResponses.length == 0) {
+      console.log("fetching intial response")
       fetchAndSetResponse(INITIAL_PROMPT);
     } else {
-      setPrompt(JSON.parse(savedResponses));
+      setResponses(savedResponses);
     }
   }, []);
 
   useEffect(() => {
-    window.localStorage.set(LOCAL_STORAGE_KEY, JSON.stringify(responses));
-  });
+    window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(responses));
+  }, [responses]);
 
   const fetchAndSetResponse = async (promptString) => {
     const fetchedData = await getOpenAIResponseObject(promptString);
@@ -89,7 +90,7 @@ export default function App() {
   };
 
   const handleSubmit = async (evt) => {
-    evt.preventDefault(); // return false
+    evt.preventDefault();
 
     flushSync(() => {
       setIsSubmitting(true);
@@ -109,11 +110,11 @@ export default function App() {
     <div className="App">
       <PromptInput
         prompt={prompt}
+        isSubmitting={isSubmitting}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
       />
-      <ResponseList responses={responses} />
+      <ResponseList responses={responses} setResponses={setResponses} setPrompt={setPrompt}  />
     </div>
   );
 }
