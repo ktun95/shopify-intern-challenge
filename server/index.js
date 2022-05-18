@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const PORT = 8080;
-const API_TOKEN = process.env.OPENAI_API_TOKEN;
+const API_TOKEN = require("../secrets") || process.env.OPENAI_API_TOKEN;
 
 app.use(express.static(path.join(__dirname, "..", "public")));
 
