@@ -2,7 +2,6 @@
   ADD - more sophisticated error handling on getOpenAIReponseObject
   ADD - Local Storage 
   TEST - what fixed handleSubmit? flushSync or await?
-  FIX - Initial response is fetched twice, when it should be fetched once.
 */
 
 import "./styles.css";
@@ -12,8 +11,8 @@ import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
 const API_TOKEN = window.API_TOKEN;
+const LOCAL_STORAGE_KEY = "openAIResponses";
 const INITIAL_PROMPT = "Write a recipe for an invisibility potion.";
-
 const getOpenAIResponseObject = async (
   promptString,
   engineId = "text-curie-001"
@@ -53,7 +52,6 @@ const getOpenAIResponseObject = async (
 };
 
 const parseAPIResponse = (responseObject) => {
-  console.log("from parseAPIresponse", responseObject);
   const { id, choices } = responseObject;
   return { id, responseString: choices[0].text };
 };
@@ -63,15 +61,22 @@ export default function App() {
   const [responses, setResponses] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  console.log(window.API_TOKEN);
+  useEffect(() => {
+    const savedResponses = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!savedResponses) {
+      fetchAndSetResponse(INITIAL_PROMPT);
+    } else {
+      setPrompt(JSON.parse(savedResponses));
+    }
+  }, []);
 
   useEffect(() => {
-    fetchAndSetResponse(INITIAL_PROMPT);
-  }, []);
+    window.localStorage.set(LOCAL_STORAGE_KEY, JSON.stringify(responses));
+  });
 
   const fetchAndSetResponse = async (promptString) => {
     const fetchedData = await getOpenAIResponseObject(promptString);
-    console.log("fromfetchAndSet", fetchedData);
+
     const responseItem = parseAPIResponse(fetchedData);
     setResponses((prevResponses) => [
       { prompt: promptString, ...responseItem },
@@ -87,13 +92,11 @@ export default function App() {
     evt.preventDefault(); // return false
 
     flushSync(() => {
-      console.log("flushing updates");
       setIsSubmitting(true);
     });
 
     try {
       await fetchAndSetResponse(prompt);
-      console.log(isSubmitting);
     } catch (err) {
       console.error(err.message, err.stack);
     } finally {
