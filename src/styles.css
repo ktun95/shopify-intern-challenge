@@ -28,6 +28,10 @@
   border: none;
 }
 
+#submit-prompt-button:disabled {
+  background-color: rgb(103, 152, 211);
+}
+
 #root {
   height: 100%;
 }
@@ -103,10 +107,6 @@ textarea {
 
 button:hover {
   cursor: pointer;
-}
-
-button:disabled {
-  background-color: rgb(103, 152, 211);
 }
 
 html,

@@ -21,8 +21,7 @@ export const PromptInput = ({
             onChange={handleChange}
             value={prompt}
           ></textarea>
-          <div id="controls">
-            
+          <div id="controls">            
             <button id="submit-prompt-button" type="submit" aria-label="Submit" disabled={isSubmitting}>Submit</button>
           </div>
         </div>
