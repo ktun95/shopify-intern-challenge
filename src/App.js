@@ -10,7 +10,6 @@ const INITIAL_PROMPT = "Write a story about a boy named Kevin who meets a toad w
 const fetchAPIToken = async () => {
   const response = await fetch("/api/token");
   const data = await response.json();
-  console.log(data)
   return data.API_TOKEN;
 }
 
