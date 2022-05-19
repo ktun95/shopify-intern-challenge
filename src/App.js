@@ -5,13 +5,14 @@ import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
 const LOCAL_STORAGE_KEY = "openAIResponses";
-const INITIAL_PROMPT = "Write a story about a boy named Kevin who meets a toad who lives at the bottom of a well.";
+const INITIAL_PROMPT =
+  "Write a story about a boy named Kevin who meets a toad who lives at the bottom of a well.";
 
 const fetchAPIToken = async () => {
   const response = await fetch("/api/token");
   const data = await response.json();
   return data.API_TOKEN;
-}
+};
 
 const getOpenAIResponseObject = async (
   promptString,
@@ -62,8 +63,10 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const savedResponses = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY));
-    if (!savedResponses || savedResponses.length == 0) {
+    const savedResponses = JSON.parse(
+      window.localStorage.getItem(LOCAL_STORAGE_KEY)
+    );
+    if (!savedResponses || savedResponses.length === 0) {
       fetchAndSetResponse(INITIAL_PROMPT);
     } else {
       setResponses(savedResponses);
@@ -75,16 +78,19 @@ export default function App() {
   }, [responses]);
 
   const fetchAndSetResponse = async (promptString) => {
-    try{
-      const OpenAIToken = await fetchAPIToken()
-      const fetchedData = await getOpenAIResponseObject(promptString, OpenAIToken);
+    try {
+      const OpenAIToken = await fetchAPIToken();
+      const fetchedData = await getOpenAIResponseObject(
+        promptString,
+        OpenAIToken
+      );
       const responseItem = parseAPIResponse(fetchedData);
       setResponses((prevResponses) => [
         { prompt: promptString, ...responseItem },
         ...prevResponses
       ]);
     } catch (err) {
-      console.error(err.message, err.stack)
+      console.error(err.message, err.stack);
     }
   };
 
@@ -117,7 +123,11 @@ export default function App() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <ResponseList responses={responses} setResponses={setResponses} setPrompt={setPrompt}  />
+      <ResponseList
+        responses={responses}
+        setResponses={setResponses}
+        setPrompt={setPrompt}
+      />
     </div>
   );
 }
