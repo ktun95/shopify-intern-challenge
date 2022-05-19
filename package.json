@@ -9,7 +9,10 @@
     "start": "webpack --mode production && node server",
     "start-dev": "webpack --mode development && node server"
   },
-  "keywords": ["OpenAI", "React"],
+  "keywords": [
+    "OpenAI",
+    "React"
+  ],
   "author": "Kevin Tun",
   "license": "MIT",
   "dependencies": {
