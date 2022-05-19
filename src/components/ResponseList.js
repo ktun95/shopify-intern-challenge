@@ -15,7 +15,7 @@ export const ResponseList = ({ responses, setPrompt, setResponses }) => {
             <div className="data-field">{response.responseString}</div>
           </div>
           <button className="icon-button" name="rewrite-prompt" onClick={() => {setPrompt(response.prompt); window.scroll({top: 0, behavior: 'smooth'})}}>
-            <span class="material-symbols-outlined">
+            <span className="material-symbols-outlined">
               refresh 
             </span>
           </button>

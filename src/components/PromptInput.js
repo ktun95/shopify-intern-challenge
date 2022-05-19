@@ -15,7 +15,7 @@ export const PromptInput = ({
         onSubmit={handleSubmit}
       >
         <div id="text-input-button-block">
-          <label for="prompt-input">Enter a prompt</label>
+          <label htmlFor="prompt-input">Enter a prompt</label>
           <textarea
             name="prompt-input"
             onChange={handleChange}
