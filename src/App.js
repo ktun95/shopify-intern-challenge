@@ -8,12 +8,18 @@ import { flushSync } from "react-dom";
 import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
-const API_TOKEN = window.API_TOKEN;
 const LOCAL_STORAGE_KEY = "openAIResponses";
 const INITIAL_PROMPT = "Write a .";
 
+const fetchAPIToken = async () => {
+  const response = await fetch("/api/token");
+  const data = await response.json();
+  return data.API_TOKEN;
+}
+
 const getOpenAIResponseObject = async (
   promptString,
+  apiToken,
   engineId = "text-curie-001"
 ) => {
   let response;
@@ -22,7 +28,7 @@ const getOpenAIResponseObject = async (
 
   let url = `https://api.openai.com/v1/engines/${engineId}/completions`;
   let headers = {
-    Authorization: `Bearer ${API_TOKEN}`,
+    Authorization: `Bearer ${apiToken}`,
     "Content-Type": "application/json"
   };
 
@@ -62,9 +68,7 @@ export default function App() {
 
   useEffect(() => {
     const savedResponses = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY));
-    console.log(savedResponses, savedResponses.length)
     if (!savedResponses || savedResponses.length == 0) {
-      console.log("fetching intial response")
       fetchAndSetResponse(INITIAL_PROMPT);
     } else {
       setResponses(savedResponses);
@@ -76,7 +80,8 @@ export default function App() {
   }, [responses]);
 
   const fetchAndSetResponse = async (promptString) => {
-    const fetchedData = await getOpenAIResponseObject(promptString);
+    const OpenAIToken = await fetchAPIToken()
+    const fetchedData = await getOpenAIResponseObject(promptString, OpenAIToken);
 
     const responseItem = parseAPIResponse(fetchedData);
     setResponses((prevResponses) => [
