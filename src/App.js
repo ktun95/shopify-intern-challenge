@@ -1,12 +1,12 @@
 import "./styles.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
 const LOCAL_STORAGE_KEY = "openAIResponses";
 const INITIAL_PROMPT =
-  "Write a story about a boy named Kevin who meets a toad who lives at the bottom of a well.";
+  "Write a story about a man named Kevin who meets a toad who lives at the bottom of a well.";
 
 const fetchAPIToken = async () => {
   const response = await fetch("/api/token");
@@ -61,6 +61,7 @@ export default function App() {
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const textAreaRef = useRef();
 
   useEffect(() => {
     const savedResponses = JSON.parse(
@@ -122,11 +123,13 @@ export default function App() {
         isSubmitting={isSubmitting}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        textAreaRef={textAreaRef}
       />
       <ResponseList
         responses={responses}
         setResponses={setResponses}
         setPrompt={setPrompt}
+        textAreaRef={textAreaRef}
       />
     </div>
   );

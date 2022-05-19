@@ -2,7 +2,8 @@ export const PromptInput = ({
   handleSubmit,
   handleChange,
   prompt,
-  isSubmitting
+  isSubmitting,
+  textAreaRef
 }) => {
   return (
     <section id="prompt-controls">
@@ -20,9 +21,17 @@ export const PromptInput = ({
             name="prompt-input"
             onChange={handleChange}
             value={prompt}
+            ref={textAreaRef}
           ></textarea>
-          <div id="controls">            
-            <button id="submit-prompt-button" type="submit" aria-label="Submit" disabled={isSubmitting}>Submit</button>
+          <div id="controls">
+            <button
+              id="submit-prompt-button"
+              type="submit"
+              aria-label="Submit"
+              disabled={isSubmitting}
+            >
+              Submit
+            </button>
           </div>
         </div>
       </form>
