@@ -1,7 +1,3 @@
-/*
-  ADD - more sophisticated error handling on getOpenAIReponseObject
-*/
-
 import "./styles.css";
 import { useState, useEffect } from "react";
 import { flushSync } from "react-dom";
@@ -9,11 +5,12 @@ import { PromptInput } from "./components/PromptInput.js";
 import { ResponseList } from "./components/ResponseList.js";
 
 const LOCAL_STORAGE_KEY = "openAIResponses";
-const INITIAL_PROMPT = "Write a .";
+const INITIAL_PROMPT = "Write a story about a boy named Kevin who meets a toad who lives at the bottom of a well.";
 
 const fetchAPIToken = async () => {
   const response = await fetch("/api/token");
   const data = await response.json();
+  console.log(data)
   return data.API_TOKEN;
 }
 
@@ -25,7 +22,6 @@ const getOpenAIResponseObject = async (
   let response;
   let timeout = 6000;
   const controller = new AbortController();
-
   let url = `https://api.openai.com/v1/engines/${engineId}/completions`;
   let headers = {
     Authorization: `Bearer ${apiToken}`,
@@ -80,14 +76,17 @@ export default function App() {
   }, [responses]);
 
   const fetchAndSetResponse = async (promptString) => {
-    const OpenAIToken = await fetchAPIToken()
-    const fetchedData = await getOpenAIResponseObject(promptString, OpenAIToken);
-
-    const responseItem = parseAPIResponse(fetchedData);
-    setResponses((prevResponses) => [
-      { prompt: promptString, ...responseItem },
-      ...prevResponses
-    ]);
+    try{
+      const OpenAIToken = await fetchAPIToken()
+      const fetchedData = await getOpenAIResponseObject(promptString, OpenAIToken);
+      const responseItem = parseAPIResponse(fetchedData);
+      setResponses((prevResponses) => [
+        { prompt: promptString, ...responseItem },
+        ...prevResponses
+      ]);
+    } catch (err) {
+      console.error(err.message, err.stack)
+    }
   };
 
   const handleChange = (evt) => {
